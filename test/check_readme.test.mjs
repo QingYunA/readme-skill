@@ -86,3 +86,14 @@ test('bilingual drift: badges and section counts are compared with README.<lang>
   assert.ok(f.some((x) => x.detail.startsWith('headings: 2 here, 1')))
   assert.ok(f.some((x) => x.detail.includes('badge only here: https://x.dev/badges/rank.svg')))
 })
+
+test('the CLI runs when started through a symlinked skill folder', async () => {
+  const { execFileSync } = await import('node:child_process')
+  const { symlinkSync } = await import('node:fs')
+  const { fileURLToPath } = await import('node:url')
+  const skillDir = fileURLToPath(new URL('../skills/github-readme', import.meta.url))
+  const dir = repo({ 'README.md': '# Tool\n' })
+  symlinkSync(skillDir, join(dir, 'linked-skill'))
+  const out = execFileSync(process.execPath, [join(dir, 'linked-skill/scripts/check_readme.mjs'), join(dir, 'README.md')], { encoding: 'utf8' })
+  assert.match(out, /^clean: /)
+})

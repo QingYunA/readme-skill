@@ -9,9 +9,9 @@
 // Warnings: README longer than --max-lines, inflated words, bilingual drift against --pair
 //           (the pair is found automatically for README.md next to README.<lang>.md).
 
-import { existsSync, readFileSync, readdirSync } from 'node:fs'
+import { existsSync, readFileSync, readdirSync, realpathSync } from 'node:fs'
 import { basename, dirname, join, resolve } from 'node:path'
-import { pathToFileURL } from 'node:url'
+import { fileURLToPath } from 'node:url'
 
 const VOID_TAGS = new Set(['img', 'br', 'hr', 'source', 'input', 'meta', 'link', 'wbr'])
 const CHECKED_TAGS = new Set(['p', 'div', 'picture', 'details', 'summary', 'table', 'tr', 'td', 'th', 'a', 'b', 'sub', 'sup', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'kbd'])
@@ -185,4 +185,5 @@ function main(argv) {
   return failed ? 1 : 0
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1]).href) process.exit(main(process.argv.slice(2)))
+// Compare real paths: skill folders are often symlinks, and /tmp is one on macOS.
+if (process.argv[1] && realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url))) process.exit(main(process.argv.slice(2)))
