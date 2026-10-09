@@ -1,0 +1,12 @@
+{
+  "name": "readme-skill",
+  "private": true,
+  "type": "module",
+  "description": "An agent skill for writing, updating, slimming and reviewing GitHub READMEs",
+  "license": "MIT",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "lint:readme": "node skills/github-readme/scripts/check_readme.mjs README.md README.zh-CN.md"
+  }
+}
